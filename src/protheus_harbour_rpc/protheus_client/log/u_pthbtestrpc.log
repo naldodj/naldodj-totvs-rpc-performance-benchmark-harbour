@@ -1,0 +1,355 @@
+Gerando dados de teste...
+==============================================
+TESTE DE PERFORMANCE: RPC vs ADVPL
+==============================================
+Tempo geracao dados:       0.42s
+Itens preparados: 50000
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.90s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.24s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.90 segundos
+RPC+C:     0.24 segundos
+GANHO:     73.5% mais rapido
+RPC eh:    3.8x mais rapido
+==============================================
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.35s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.21s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.35 segundos
+RPC+C:     0.21 segundos
+GANHO:     38.8% mais rapido
+RPC eh:    1.6x mais rapido
+==============================================
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.33s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.27s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.33 segundos
+RPC+C:     0.27 segundos
+GANHO:     18.6% mais rapido
+RPC eh:    1.2x mais rapido
+==============================================
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.33s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.17s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.33 segundos
+RPC+C:     0.17 segundos
+GANHO:     48.4% mais rapido
+RPC eh:    1.9x mais rapido
+==============================================
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.33s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.25s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.33 segundos
+RPC+C:     0.25 segundos
+GANHO:     22.6% mais rapido
+RPC eh:    1.3x mais rapido
+==============================================
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.31s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.23s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.31 segundos
+RPC+C:     0.23 segundos
+GANHO:     27.2% mais rapido
+RPC eh:    1.4x mais rapido
+==============================================
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.32s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.49s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.32 segundos
+RPC+C:     0.49 segundos
+GANHO:    -52.3% mais rapido
+==============================================
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.83s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.39s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.83 segundos
+RPC+C:     0.39 segundos
+GANHO:     52.8% mais rapido
+RPC eh:    2.1x mais rapido
+==============================================
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.85s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.42s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.85 segundos
+RPC+C:     0.42 segundos
+GANHO:     50.8% mais rapido
+RPC eh:    2.0x mais rapido
+==============================================
+PROCESSAMENTO ADVPL:
+-------------------
+Tempo processamento ADVPL:       0.84s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+PROCESSAMENTO RPC + C:
+---------------------
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 721895/721895
+Tempo processamento RPC:       0.37s
+Primeiro preco: R$      43,35
+Ultimo preco: R$      45,00
+==============================================
+RESUMO:
+ADVPL:     0.84 segundos
+RPC+C:     0.37 segundos
+GANHO:     56.3% mais rapido
+RPC eh:    2.3x mais rapido
+==============================================
+==============================================
+Falhas no processamento RPC: 0
+Gerando dados para lote massivo...
+==============================================
+TESTE DE PERFORMANCE: RPC vs ADVPL
+==============================================
+Tempo geracao dados:       0.35s
+Itens preparados: 50000
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   1.19s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.41s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     1.19 segundos
+RPC+C:     0.41 segundos
+GANHO:     66.1% mais rapido
+RPC eh:    2.9x mais rapido
+==============================================
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   1.16s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.43s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     1.16 segundos
+RPC+C:     0.43 segundos
+GANHO:     62.5% mais rapido
+RPC eh:    2.7x mais rapido
+==============================================
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   1.14s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.41s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     1.14 segundos
+RPC+C:     0.41 segundos
+GANHO:     64.3% mais rapido
+RPC eh:    2.8x mais rapido
+==============================================
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   1.32s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.43s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     1.32 segundos
+RPC+C:     0.43 segundos
+GANHO:     67.7% mais rapido
+RPC eh:    3.1x mais rapido
+==============================================
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   1.22s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.48s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     1.22 segundos
+RPC+C:     0.48 segundos
+GANHO:     60.4% mais rapido
+RPC eh:    2.5x mais rapido
+==============================================
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   1.14s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.34s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     1.14 segundos
+RPC+C:     0.34 segundos
+GANHO:     70.6% mais rapido
+RPC eh:    3.4x mais rapido
+==============================================
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   0.44s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.22s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     0.44 segundos
+RPC+C:     0.22 segundos
+GANHO:     49.5% mais rapido
+RPC eh:    2.0x mais rapido
+==============================================
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   0.42s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.19s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     0.42 segundos
+RPC+C:     0.19 segundos
+GANHO:     55.2% mais rapido
+RPC eh:    2.2x mais rapido
+==============================================
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   0.44s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.24s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     0.44 segundos
+RPC+C:     0.24 segundos
+GANHO:     46.7% mais rapido
+RPC eh:    1.9x mais rapido
+==============================================
+TESTE PROCESSAMENTO COMPLEXO:
+=============================
+ADVPL:   0.54s - Preco: R$     107,30
+Tentativa 1 de conexao
+Conectado 1
+Total bytes recebidos: 1038895/1038895
+RPC+C:   0.24s - Preco: R$     107,30
+==============================================
+RESUMO:
+ADVPL:     0.54 segundos
+RPC+C:     0.24 segundos
+GANHO:     54.9% mais rapido
+RPC eh:    2.2x mais rapido
+==============================================
+==============================================
+Falhas no processamento RPC: 0

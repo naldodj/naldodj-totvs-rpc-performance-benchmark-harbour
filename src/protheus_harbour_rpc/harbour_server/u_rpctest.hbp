@@ -1,0 +1,24 @@
+# server_netio.hbp - COM SUPORTE A THREADS
+-gtwin
+-mt
+-cpp
+-DHB_THREAD_SUPPORT
+-DHB_PCRE_STATIC
+
+# Bibliotecas essenciais
+xhb.hbc
+hbct.hbc
+{win}hbwin.hbc
+hbmzip.hbc
+
+{win}-lucrt
+
+{win}-ldflag=/NODEFAULTLIB:msvcrt
+{win}-ldflag+=/NODEFAULTLIB:libucrt
+
+./u_rpctest.prg
+
+-o./${hb_name}
+
+# Flags de otimização
+

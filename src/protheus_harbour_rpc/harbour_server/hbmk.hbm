@@ -1,0 +1,8 @@
+-w3 -es2
+
+xhb.hbc
+hbct.hbc
+#if defined(__PLATFORM__WINDOWS)
+    hbwin.hbc
+#endif
+hbmzip.hbc

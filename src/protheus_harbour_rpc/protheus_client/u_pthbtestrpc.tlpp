@@ -1,0 +1,505 @@
+// U_RPCTEST.PRG - Cliente RPC para Protheus com comparativo
+#INCLUDE "TOTVS.ch"
+#INCLUDE "TBICONN.CH"
+
+/*/{Protheus.doc} U_PTHBTestRPC()
+Teste de cliente RPC para processamento otimizado com comparativo ADVPL
+@author SeuNome
+@since 01/01/2024
+@version 1.0
+/*/
+
+Function U_PTHBTestAllRPC()
+    U_PTHBTestRPC()
+    U_PTHBTestMassiveBatch()
+return
+
+Function U_PTHBTestRPC()
+RETURN(FWMsgRun(nil,{||PTHBTestRPC()}))
+
+Function U_PTHBTestMassiveBatch()
+RETURN(FWMsgRun(nil,{||PTHBTestMassiveBatch()}))
+
+static function PTHBTestRPC()
+
+    Local aItens := {}
+    Local nI, xResultRPC, aResultADVPL
+    Local nStart, nEnd, nTimeRPC, nTimeADVPL
+    Local nGanho
+    local jDados:=JsonObject():New()
+    local nJ
+
+    private oSocket := tSocketClient():New(.F.)
+    private nFalhas := 0
+
+    // Gera dados de teste - 50K itens para teste comparativo
+    ConOut("Gerando dados de teste...")
+    nStart := Seconds()
+    For nI := 1 To 50000
+        AAdd(aItens, {nI, 100 + Mod(nI, 1000), 50.00 + Mod(nI, 200)})
+    Next
+    nEnd := Seconds()
+
+    ConOut("==============================================")
+    ConOut("TESTE DE PERFORMANCE: RPC vs ADVPL")
+    ConOut("==============================================")
+    ConOut("Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "s")
+    ConOut("Itens preparados: " + tlpp.ToStr(Len(aItens)))
+    ConOut("")
+
+    jDados:Set(aItens)
+
+    for nJ:=1 to 10
+
+        // Processa via ADVPL (implementacao pura)
+        ConOut("")
+        ConOut("PROCESSAMENTO ADVPL:")
+        ConOut("-------------------")
+        nStart := Seconds()
+        aResultADVPL := StartJob("U_PTHbProcADVPL",Getenvserver(),.T.,jDados)
+        nEnd := Seconds()
+        nTimeADVPL := nEnd - nStart
+
+        If aResultADVPL != NIL
+            ConOut("Tempo processamento ADVPL: " + Str(nTimeADVPL, 10, 2) + "s")
+            ConOut("Primeiro preco: R$ " + Transform(aResultADVPL[1][2], "@E 999,999.99"))
+            ConOut("Ultimo preco: R$ " + Transform(aResultADVPL[Len(aResultADVPL)][2], "@E 999,999.99"))
+        Else
+            nFalhas++
+            ConOut("Falha no processamento ADVPL")
+        EndIf
+
+        ConOut("")
+
+        // Processa via RPC
+        ConOut("PROCESSAMENTO RPC + C:")
+        ConOut("---------------------")
+        nStart := Seconds()
+        xResultRPC := U_RPCProcessar("CALC_PRECO_OTIMIZADO", jDados)
+        nEnd := Seconds()
+        nTimeRPC := nEnd - nStart
+
+        If ValType(xResultRPC)=="J".and.!xResultRPC:HasProperty("ERROR").and.Len(xResultRPC)>0
+
+            ConOut("Tempo processamento RPC: " + Str(nTimeRPC, 10, 2) + "s")
+            ConOut("Primeiro preco: R$ " + Transform(xResultRPC[1][2], "@E 999,999.99"))
+            ConOut("Ultimo preco: R$ " + Transform(xResultRPC[Len(xResultRPC)][2], "@E 999,999.99"))
+
+            ConOut("")
+            ConOut("==============================================")
+            ConOut("RESUMO:")
+            ConOut("ADVPL: " + Str(nTimeADVPL, 8, 2) + " segundos")
+            ConOut("RPC+C: " + Str(nTimeRPC, 8, 2) + " segundos")
+
+            If nTimeADVPL > 0 .and. nTimeRPC > 0
+                nGanho := ((nTimeADVPL - nTimeRPC) / nTimeADVPL) * 100
+                ConOut("GANHO: " + Str(nGanho, 8, 1) + "% mais rapido")
+
+                If nGanho > 0
+                    ConOut("RPC eh: " + Str(nTimeADVPL / nTimeRPC, 6, 1) + "x mais rapido")
+                EndIf
+            EndIf
+            ConOut("==============================================")
+
+        ELSEIf ValType(xResultRPC)=="J".and.xResultRPC:HasProperty("ERROR")
+            nFalhas++
+            ConOut("ERRO no processamento RPC: " + xResultRPC:ToJson())
+        Else
+            nFalhas++
+            ConOut("Falha no processamento RPC")
+        EndIf
+
+    Next nJ
+
+    ConOut("")
+    ConOut("==============================================")
+    ConOut("Falhas no processamento RPC: " + tlpp.ToStr(nFalhas))
+
+    FreeObj(@oSocket)
+
+Return xResultRPC
+
+/*/{Protheus.doc} U_PTHbProcADVPL()
+Processa dados puramente em ADVPL (mesma logica do C)
+@type function
+@param jDados - Dados para processamento
+@return Array - Resultado do processamento
+/*/
+
+Function U_PTHbProcADVPL(jDados)
+    Local aResult := {}
+    Local nI, aItem, nQty, nPreco, nDesconto
+    Local nPrecoFinal
+
+    local aDados:=jDados
+
+    // Mesma logica implementada em C
+    For nI := 1 To Len(aDados)
+        aItem := aDados[nI]
+
+        If Len(aItem) >= 3
+            nQty := aItem[2]
+            nPreco := aItem[3]
+
+            // EXATAMENTE a mesma logica de desconto do C
+            If nQty > 100
+                nDesconto := 0.15
+            ElseIf nQty > 50
+                nDesconto := 0.10
+            Else
+                nDesconto := 0.05
+            EndIf
+
+            nPrecoFinal := nPreco * (1.0 - nDesconto)
+
+            AAdd(aResult, {nI, nPrecoFinal})
+        EndIf
+    Next nI
+
+Return aResult
+
+/*/{Protheus.doc} U_PTHBProcADVPLBatch()
+Processamento mais complexo em ADVPL (equivalente ao C)
+@type function
+@param aDados Array - Dados para processamento
+@return Array - Resultado do processamento
+/*/
+
+Function U_PTHBProcADVPLBatch(jDados)
+    Local aResult := {}
+    Local nI, aItem, nQty, nPreco
+    Local nMargem, nImposto, nPrecoFinal
+
+    local aDados:=jDados
+
+    For nI := 1 To Len(aDados)
+        aItem := aDados[nI]
+
+        If Len(aItem) >= 3
+            nQty := aItem[2]
+            nPreco := aItem[3]
+
+            // Mesma logica complexa do C
+            nMargem := 0.30  // Margem padrão
+            nImposto := 0.18 // ICMS + PIS + COFINS
+
+            If nQty > 1000
+                nMargem := 0.25
+                nImposto := 0.16
+            ElseIf nQty > 500
+                nMargem := 0.28
+                nImposto := 0.17
+            EndIf
+
+            nPrecoFinal := nPreco * (1.0 + nMargem) * (1.0 - nImposto)
+
+            AAdd(aResult, {nI, nPrecoFinal, nMargem * 100})
+        EndIf
+    Next nI
+
+Return aResult
+
+/*/{Protheus.doc} U_PTHBTestMassiveBatch()
+Teste com processamento mais complexo
+@type function
+/*/
+
+static Function PTHBTestMassiveBatch()
+    Local aItens := {}
+    Local nI, xResultRPC, aResultADVPL
+    Local nStart, nEnd, nTimeRPC, nTimeADVPL,nGanho
+    local jDados:=JsonObject():New()
+    local nJ
+
+    private oSocket := tSocketClient():New()
+    private nFalhas := 0
+
+    // Gera dados de teste
+    ConOut("Gerando dados para lote massivo...")
+    nStart := Seconds()
+    For nI := 1 To 50000
+        AAdd(aItens, {nI, 500 + Mod(nI, 1500), 100.00 + Mod(nI, 300)})
+    Next
+    nEnd := Seconds()
+
+    jDados:Set(aItens)
+
+    ConOut("==============================================")
+    ConOut("TESTE DE PERFORMANCE: RPC vs ADVPL")
+    ConOut("==============================================")
+    ConOut("Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "s")
+    ConOut("Itens preparados: " + tlpp.ToStr(Len(aItens)))
+    ConOut("")
+
+    for nJ:=1 to 10
+
+        ConOut("")
+        ConOut("TESTE PROCESSAMENTO COMPLEXO:")
+        ConOut("=============================")
+
+        // ADVPL
+        nStart := Seconds()
+        aResultADVPL := StartJob("U_PTHBProcADVPLBatch",Getenvserver(),.T.,jDados)
+        nEnd := Seconds()
+        nTimeADVPL := nEnd - nStart
+        ConOut("ADVPL: " + Str(nEnd - nStart, 6, 2) + "s - " + ;
+            "Preco: R$ " + Transform(aResultADVPL[1][2], "@E 999,999.99"))
+
+        // RPC
+        nStart := Seconds()
+        xResultRPC := U_RPCProcessar("PROCESSAR_LOTE_MASSIVO", jDados)
+        nEnd := Seconds()
+        nTimeRPC := nEnd - nStart
+
+        If ValType(xResultRPC)=="J".and.!xResultRPC:HasProperty("ERROR").and.Len(xResultRPC)>0
+            ConOut("RPC+C: " + Str(nEnd - nStart, 6, 2) + "s - " + ;
+                "Preco: R$ " + Transform(xResultRPC[1][2], "@E 999,999.99"))
+            ConOut("")
+            ConOut("==============================================")
+            ConOut("RESUMO:")
+            ConOut("ADVPL: " + Str(nTimeADVPL, 8, 2) + " segundos")
+            ConOut("RPC+C: " + Str(nTimeRPC, 8, 2) + " segundos")
+
+            If nTimeADVPL > 0 .and. nTimeRPC > 0
+                nGanho := ((nTimeADVPL - nTimeRPC) / nTimeADVPL) * 100
+                ConOut("GANHO: " + Str(nGanho, 8, 1) + "% mais rapido")
+
+                If nGanho > 0
+                    ConOut("RPC eh: " + Str(nTimeADVPL / nTimeRPC, 6, 1) + "x mais rapido")
+                EndIf
+            EndIf
+            ConOut("==============================================")
+
+        ELSEIf ValType(xResultRPC)=="J".and.xResultRPC:HasProperty("ERROR")
+            nFalhas++
+            ConOut("ERRO no processamento RPC: " + xResultRPC:ToJson())
+        Else
+            nFalhas++
+            ConOut("Falha no processamento RPC")
+        EndIf
+
+    next nJ
+
+    ConOut("")
+    ConOut("==============================================")
+    ConOut("Falhas no processamento RPC: " + tlpp.ToStr(nFalhas))
+
+    FreeObj(@oSocket)
+
+Return
+
+// ==================================================
+// FUNÇÕES RPC (mantidas do exemplo anterior)
+// ==================================================
+
+/*/{Protheus.doc} U_RPCProcessar()
+Processa dados via RPC
+@type function
+@param cFuncao Caracter - Funcao a executar
+@param aDados Array - Dados para processamento
+@return Array - Resultado do processamento
+/*/
+
+Static Function U_RPCProcessar(cFuncao, jDados)
+    Local cError:=""
+    Local oResult := NIL
+    Local lConectado := .F.
+    Local nTentativa
+
+    // Tenta conexao
+    For nTentativa := 1 To 10
+        ConOut("Tentativa " + tlpp.ToStr(nTentativa) + " de conexao")
+        oSocket:Connect(123456, "127.0.0.1", 5)
+        lConectado:=oSocket:IsConnected()
+        If (lConectado)
+            ConOut("Conectado " + tlpp.ToStr(nTentativa))
+            Exit
+        ELSEIF oSocket:GetError(@cError)!=nil
+            ConOut("Tentativa " + tlpp.ToStr(nTentativa) + " de conexao falhou: " + cError)
+        EndIf
+        Sleep(1000)
+    Next nTentativa
+
+    If lConectado
+        If SendRPCDados(oSocket, cFuncao, jDados)
+            oResult := ReceiveRPCResult(oSocket)
+        EndIf
+        oSocket:CloseConnection()
+    Else
+        ConOut("ERRO: Nao foi possivel conectar ao servidor RPC")
+    EndIf
+
+Return oResult
+
+/*/{Protheus.doc} SendRPCDados()
+Envia dados para servidor RPC
+@type static function
+/*/
+
+Static Function SendRPCDados(oSocket, cFuncao, jDados)
+    Local cDadosJSON
+    Local cComp := "", nCompLen := 0
+    Local cID := GetUniqueID()
+    Local cError:=""
+    Local nTotal
+    Local cHeader
+    Local cResp := "", lRet := .F.
+    local lGzStrComp:=.F.
+
+    cDadosJSON:=jDados:ToJson()
+
+    // Compacta dados
+    If lGzStrComp.and.GzStrComp(cDadosJSON, @cComp, @nCompLen)
+        cDadosJSON := "GZ" + cComp
+    EndIf
+    nTotal := Len(cDadosJSON)
+
+    // Handshake
+    cHeader := cID+":"+cFuncao+":"+StrZero(nTotal,10)
+    If oSocket:Send(cHeader)>0
+        If oSocket:Receive(@cResp, 100) > 0
+            If "OK:"+cID$cResp
+                // Envia dados em chunks
+                If SendChunkedData(oSocket, cDadosJSON)
+                    lRet := .T.
+                EndIf
+            EndIf
+        EndIf
+    elseif oSocket:GetError(@cError)!=nil
+        ConOut("ERRO ao enviar dados RPC: " + cError)
+    EndIf
+
+Return lRet
+
+/*/{Protheus.doc} SendChunkedData()
+Envia dados em chunks
+@type static function
+/*/
+
+Static Function SendChunkedData(oSocket, cData)
+    Local cError:=""
+    Local nSent := 0, nTotal := Len(cData)
+    Local nChunk, cPart, cResp
+
+    nSent:=oSocket:Send(cData)
+    if nSent<=0
+        While nSent < nTotal
+            nChunk := Min(65000, nTotal - nSent)
+            cPart := SubStr(cData, nSent + 1, nChunk)
+            If !oSocket:Send(cPart)>0
+                if oSocket:GetError(@cError)!=nil
+                    ConOut("ERRO ao enviar chunk de dados RPC: " + cError)
+                endif
+                Exit
+            EndIf
+            // Confirmação de chunk
+            oSocket:Receive(@cResp, 10)
+            nSent += nChunk
+        End Do
+    endif
+
+Return (nSent == nTotal)
+
+/*/{Protheus.doc} ReceiveRPCResult()
+Recebe resultado do RPC
+@type static function
+/*/
+
+/*/{Protheus.doc} ReceiveRPCResult()
+Recebe resultado do RPC - VERSAO CORRIGIDA
+@type static function
+/*/
+
+Static Function ReceiveRPCResult(oSocket)
+    LOCAL aResp, cResp, nLen, cData, nRecv, nTimeout, oResult, cUncomp
+    LOCAL nStartTime, nChunkSize, cChunk, nBytes
+    Local cCRLF:=CRLF
+
+    cResp := ""
+    nLen := 0
+    cData := ""
+    nRecv := 0
+    nTimeout := 0
+    oResult := NIL
+    nStartTime := Seconds()
+
+    // *** CORREÇÃO: Aguarda header de resposta ***
+    WHILE nTimeout < 300 .AND. (Seconds() - nStartTime) < 30 // 30 segundos máximo
+        IF oSocket:Receive(@cResp, 1000) > 0
+            if cCRLF$cResp
+                aResp:= StrTokArr2(cResp,cCRLF,.T.)
+                cResp:=aResp[1]
+                cData:=aResp[2]
+                nRecv:=Len(cData)
+            endif
+            IF ("RES:"$cResp)
+                aResp:=StrTokArr2(cResp,":",.T.)
+                IF Len(aResp) >= 3
+                    nLen:=Val(aResp[3])
+                    EXIT
+                ENDIF
+            ENDIF
+        ENDIF
+        Sleep(100)
+        nTimeout++
+    ENDDO
+
+    //ConOut("Header recebido: " + cResp + " | Tamanho esperado: " + Str(nLen))
+
+    // *** CORREÇÃO: Recebe dados de forma confiável ***
+    IF nLen > 0
+
+        nStartTime := Seconds()
+
+        WHILE nRecv < nLen .AND. (Seconds() - nStartTime) < 30
+            nChunkSize := Min(65536, nLen - nRecv)
+            cChunk := Space(nChunkSize)
+
+            nBytes := oSocket:Receive(@cChunk, 5000) // 5 segundos timeout
+
+            IF nBytes > 0
+                cData += Left(cChunk, nBytes)
+                nRecv += nBytes
+                //ConOut("Progresso: " + tlpp.ToStr(nRecv) + "/" + tlpp.ToStr(nLen) + " bytes")
+            ELSEIF nBytes == 0
+                // Conexão fechada
+                EXIT
+            ELSE
+                // Timeout ou erro - continua tentando
+                Sleep(100)
+            ENDIF
+        ENDDO
+
+        ConOut("Total bytes recebidos: " + tlpp.ToStr(Len(cData)) + "/" + tlpp.ToStr(nLen))
+
+        // *** CORREÇÃO: Verifica se recebeu todos os dados ***
+        IF nRecv == nLen .AND. !Empty(cData)
+            // Processa resultado
+            IF Left(cData, 2) == "GZ"
+                cUncomp := ""
+                GzStrDecomp(SubStr(cData, 3), Len(cData) - 2, @cUncomp)
+                cData := cUncomp
+            ENDIF
+
+            oResult := JsonObject():New()
+            oResult:FromJson(cData)
+        ELSE
+            ConOut("ERRO: Dados incompletos - Recebido: " + tlpp.ToStr(nRecv) + " Esperado: " + tlpp.ToStr(nLen))
+            oResult := JsonObject():New()
+            oResult["ERROR"]:="Dados incompletos: " + tlpp.ToStr(nRecv) + "/" + tlpp.ToStr(nLen)
+        ENDIF
+    ELSE
+        ConOut("ERRO: Tamanho invalido ou timeout no header")
+        oResult := JsonObject():New()
+        oResult["ERROR"]:="Timeout ou header invalido"
+    ENDIF
+
+RETURN oResult
+
+/*/{Protheus.doc} GetUniqueID()
+Gera ID unico para transacao
+@type static function
+/*/
+
+Static Function GetUniqueID()
+Return UUIDRandomSeq()
