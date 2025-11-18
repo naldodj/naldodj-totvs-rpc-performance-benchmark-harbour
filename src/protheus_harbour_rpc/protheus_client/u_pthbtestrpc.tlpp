@@ -34,16 +34,16 @@ static function PTHBTestRPC()
 
     // Gera dados de teste - 50K itens para teste comparativo
     ConOut("Gerando dados de teste...")
-    nStart := Seconds()
+    nStart := TimeCounter()
     For nI := 1 To 50000
         AAdd(aItens, {nI, 100 + Mod(nI, 1000), 50.00 + Mod(nI, 200)})
     Next
-    nEnd := Seconds()
+    nEnd := TimeCounter()
 
     ConOut("==============================================")
     ConOut("TESTE DE PERFORMANCE: RPC vs ADVPL")
     ConOut("==============================================")
-    ConOut("Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "s")
+    ConOut("Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "ms")
     ConOut("Itens preparados: " + tlpp.ToStr(Len(aItens)))
     ConOut("")
 
@@ -55,13 +55,13 @@ static function PTHBTestRPC()
         ConOut("")
         ConOut("PROCESSAMENTO ADVPL:")
         ConOut("-------------------")
-        nStart := Seconds()
+        nStart := TimeCounter()
         aResultADVPL := StartJob("U_PTHbProcADVPL",Getenvserver(),.T.,jDados)
-        nEnd := Seconds()
+        nEnd := TimeCounter()
         nTimeADVPL := nEnd - nStart
 
         If aResultADVPL != NIL
-            ConOut("Tempo processamento ADVPL: " + Str(nTimeADVPL, 10, 2) + "s")
+            ConOut("Tempo processamento ADVPL: " + Str(nTimeADVPL, 10, 2) + "ms")
             ConOut("Primeiro preco: R$ " + Transform(aResultADVPL[1][2], "@E 999,999.99"))
             ConOut("Ultimo preco: R$ " + Transform(aResultADVPL[Len(aResultADVPL)][2], "@E 999,999.99"))
         Else
@@ -74,22 +74,22 @@ static function PTHBTestRPC()
         // Processa via RPC
         ConOut("PROCESSAMENTO RPC + C:")
         ConOut("---------------------")
-        nStart := Seconds()
+        nStart := TimeCounter()
         xResultRPC := U_RPCProcessar("CALC_PRECO_OTIMIZADO", jDados)
-        nEnd := Seconds()
+        nEnd := TimeCounter()
         nTimeRPC := nEnd - nStart
 
         If ValType(xResultRPC)=="J".and.!xResultRPC:HasProperty("ERROR").and.Len(xResultRPC)>0
 
-            ConOut("Tempo processamento RPC: " + Str(nTimeRPC, 10, 2) + "s")
+            ConOut("Tempo processamento RPC: " + Str(nTimeRPC, 10, 2) + "ms")
             ConOut("Primeiro preco: R$ " + Transform(xResultRPC[1][2], "@E 999,999.99"))
             ConOut("Ultimo preco: R$ " + Transform(xResultRPC[Len(xResultRPC)][2], "@E 999,999.99"))
 
             ConOut("")
             ConOut("==============================================")
             ConOut("RESUMO:")
-            ConOut("ADVPL: " + Str(nTimeADVPL, 8, 2) + " segundos")
-            ConOut("RPC+C: " + Str(nTimeRPC, 8, 2) + " segundos")
+            ConOut("ADVPL: " + Str(nTimeADVPL, 8, 2) + " milisegundos")
+            ConOut("RPC+C: " + Str(nTimeRPC, 8, 2) + " milisegundos")
 
             If nTimeADVPL > 0 .and. nTimeRPC > 0
                 nGanho := ((nTimeADVPL - nTimeRPC) / nTimeADVPL) * 100
@@ -216,18 +216,18 @@ static Function PTHBTestMassiveBatch()
 
     // Gera dados de teste
     ConOut("Gerando dados para lote massivo...")
-    nStart := Seconds()
+    nStart := TimeCounter()
     For nI := 1 To 50000
         AAdd(aItens, {nI, 500 + Mod(nI, 1500), 100.00 + Mod(nI, 300)})
     Next
-    nEnd := Seconds()
+    nEnd := TimeCounter()
 
     jDados:Set(aItens)
 
     ConOut("==============================================")
     ConOut("TESTE DE PERFORMANCE: RPC vs ADVPL")
     ConOut("==============================================")
-    ConOut("Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "s")
+    ConOut("Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "ms")
     ConOut("Itens preparados: " + tlpp.ToStr(Len(aItens)))
     ConOut("")
 
@@ -238,27 +238,27 @@ static Function PTHBTestMassiveBatch()
         ConOut("=============================")
 
         // ADVPL
-        nStart := Seconds()
+        nStart := TimeCounter()
         aResultADVPL := StartJob("U_PTHBProcADVPLBatch",Getenvserver(),.T.,jDados)
-        nEnd := Seconds()
+        nEnd := TimeCounter()
         nTimeADVPL := nEnd - nStart
-        ConOut("ADVPL: " + Str(nEnd - nStart, 6, 2) + "s - " + ;
+        ConOut("ADVPL: " + Str(nEnd - nStart, 6, 2) + "ms - " + ;
             "Preco: R$ " + Transform(aResultADVPL[1][2], "@E 999,999.99"))
 
         // RPC
-        nStart := Seconds()
+        nStart := TimeCounter()
         xResultRPC := U_RPCProcessar("PROCESSAR_LOTE_MASSIVO", jDados)
-        nEnd := Seconds()
+        nEnd := TimeCounter()
         nTimeRPC := nEnd - nStart
 
         If ValType(xResultRPC)=="J".and.!xResultRPC:HasProperty("ERROR").and.Len(xResultRPC)>0
-            ConOut("RPC+C: " + Str(nEnd - nStart, 6, 2) + "s - " + ;
+            ConOut("RPC+C: " + Str(nEnd - nStart, 6, 2) + "ms - " + ;
                 "Preco: R$ " + Transform(xResultRPC[1][2], "@E 999,999.99"))
             ConOut("")
             ConOut("==============================================")
             ConOut("RESUMO:")
-            ConOut("ADVPL: " + Str(nTimeADVPL, 8, 2) + " segundos")
-            ConOut("RPC+C: " + Str(nTimeRPC, 8, 2) + " segundos")
+            ConOut("ADVPL: " + Str(nTimeADVPL, 8, 2) + " milisegundos")
+            ConOut("RPC+C: " + Str(nTimeRPC, 8, 2) + " milisegundos")
 
             If nTimeADVPL > 0 .and. nTimeRPC > 0
                 nGanho := ((nTimeADVPL - nTimeRPC) / nTimeADVPL) * 100
@@ -308,11 +308,9 @@ Static Function U_RPCProcessar(cFuncao, jDados)
 
     // Tenta conexao
     For nTentativa := 1 To 10
-        ConOut("Tentativa " + tlpp.ToStr(nTentativa) + " de conexao")
         oSocket:Connect(123456, "127.0.0.1", 5)
         lConectado:=oSocket:IsConnected()
         If (lConectado)
-            ConOut("Conectado " + tlpp.ToStr(nTentativa))
             Exit
         ELSEIF oSocket:GetError(@cError)!=nil
             ConOut("Tentativa " + tlpp.ToStr(nTentativa) + " de conexao falhou: " + cError)
@@ -421,10 +419,10 @@ Static Function ReceiveRPCResult(oSocket)
     nRecv := 0
     nTimeout := 0
     oResult := NIL
-    nStartTime := Seconds()
+    nStartTime := TimeCounter()
 
     // *** CORREÇÃO: Aguarda header de resposta ***
-    WHILE nTimeout < 300 .AND. (Seconds() - nStartTime) < 30 // 30 segundos máximo
+    WHILE nTimeout < 300 .AND. (TimeCounter() - nStartTime) < 3000 // 30 segundos máximo
         IF oSocket:Receive(@cResp, 1000) > 0
             if cCRLF$cResp
                 aResp:= StrTokArr2(cResp,cCRLF,.T.)
@@ -449,9 +447,9 @@ Static Function ReceiveRPCResult(oSocket)
     // *** CORREÇÃO: Recebe dados de forma confiável ***
     IF nLen > 0
 
-        nStartTime := Seconds()
+        nStartTime := TimeCounter()
 
-        WHILE nRecv < nLen .AND. (Seconds() - nStartTime) < 30
+        WHILE nRecv < nLen .AND. (TimeCounter() - nStartTime) < 3000
             nChunkSize := Min(65536, nLen - nRecv)
             cChunk := Space(nChunkSize)
 

@@ -17,6 +17,7 @@ hbmzip.hbc
 {win}-ldflag+=/NODEFAULTLIB:libucrt
 
 ./u_rpctest.prg
+./calc_preco.c
 
 -o./${hb_name}
 

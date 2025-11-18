@@ -1,0 +1,69 @@
+{
+	"configurations": [
+		{
+			"type": "totvs_language_web_debug",
+			"request": "launch",
+			"name": "WebAgent-TOTVS Smart Client Web Debug",
+			"program": "${command:AskForProgramName}",
+			"isMultiSession": true,
+			"enableTableSync": true,
+			"suppressMultipleSessionWarning": true,
+			"enableMultiThread": true,
+			"webNavigator": "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
+			"cwb": "${workspaceFolder}"
+		}
+	],
+	"lastPrograms": [
+		{
+			"label": "u_FWWebExExample_014"
+		},
+		{
+			"label": "u_FWWebExExample_013"
+		},
+		{
+			"label": "u_FWWeb000"
+		},
+		{
+			"label": "FWWEBEX.u_FixHeaderRouteR"
+		},
+		{
+			"label": "u_teste_007"
+		},
+		{
+			"label": "UPDDISTR"
+		},
+		{
+			"label": "dna.tech.u_dnatechtools"
+		},
+		{
+			"label": "SIGACFG"
+		},
+		{
+			"args": [],
+			"label": "U_TRK0005"
+		},
+		{
+			"label": "u_FWWebExExample_022_HTML"
+		},
+		{
+			"label": "w_FWWebExExample_022_HTML"
+		},
+		{
+			"label": "w_u_FWWebExExample_022_HTML"
+		},
+		{
+			"label": "SIGAESP"
+		},
+		{
+			"label": "u_TestaMD"
+		},
+		{
+			"label": "SIGAPLS"
+		},
+		{
+			"label": "U_PTHBTestAllRPC"
+		}
+	],
+	"lastProgramExecuted": "U_PTHBTestAllRPC",
+	"lastProgramArguments": []
+}

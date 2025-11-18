@@ -3,26 +3,38 @@
 #include "hbsocket.ch"
 #include "hb_rpc_tst.ch"
 
-// u_rpctest.prg - Cliente RPC para Harbour
-// Adaptado do código Protheus/ADVPL original
+/*u_rpctest.prg - Cliente RPC para Harbour
+Adaptado do código Protheus/ADVPL original*/
 
-/*/{Harbour.doc} TESTERPC()
+/*{Harbour.doc} TESTERPC()
 Teste de cliente RPC para processamento otimizado com comparativo Harbour
 @author SeuNome
 @since 01/01/2024
 @version 1.0
-/*/
+*/
+
+REQUEST HB_CODEPAGE_UTF8EX
+REQUEST CALC_PRECO_OTIMIZADO
+REQUEST PROCESSAR_LOTE_MASSIVO
 
 PROCEDURE MAIN()
+
+    hb_cdpSelect("UTF8EX")
+    SET DATE ANSI
+    SET CENTURY ON
+
+    CLS
+
     TESTERPC()
-    TESTELOTEMASSIVO()
+    //TESTELOTEMASSIVO()
+
 RETURN
 
 FUNCTION TESTERPC()
 
     LOCAL aItens := {}
     LOCAL nI, xResultRPC, aResultHarbour
-    LOCAL nStart, nEnd, nTimeRPC, nTimeHarbour
+    LOCAL nStart, nEnd, nTimeRPC, nTimeHarbour,nTimeHarbourC
     LOCAL nGanho
     LOCAL hDados := { => }
     LOCAL nJ
@@ -30,16 +42,16 @@ FUNCTION TESTERPC()
 
     // Gera dados de teste - 50K itens para teste comparativo
     ? "Gerando dados de teste..."
-    nStart := Seconds()
+    nStart := hb_MilliSeconds()
     FOR nI := 1 TO 50000
         AAdd(aItens, {nI, 100 + Mod(nI, 1000), 50.00 + Mod(nI, 200)})
     NEXT
-    nEnd := Seconds()
+    nEnd := hb_MilliSeconds()
 
-    ? "=============================================="
-    ? "TESTE DE PERFORMANCE: RPC vs HARBOUR"
-    ? "=============================================="
-    ? "Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "s"
+    ? "==================================================="
+    ? "TESTE DE PERFORMANCE: RPC vs HARBOUR vs HARBOUR + C"
+    ? "==================================================="
+    ? "Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "ms"
     ? "Itens preparados: " + hb_NToC(Len(aItens))
     ? ""
 
@@ -51,13 +63,33 @@ FUNCTION TESTERPC()
         ?
         ? "PROCESSAMENTO HARBOUR:"
         ? "-------------------"
-        nStart := Seconds()
+        nStart := hb_MilliSeconds()
         aResultHarbour := ProcessarHarbour(hDados)
-        nEnd := Seconds()
+        nEnd := hb_MilliSeconds()
         nTimeHarbour := nEnd - nStart
 
         IF aResultHarbour != NIL .AND. Len(aResultHarbour) > 0
-            ? "Tempo processamento Harbour: " + Str(nTimeHarbour, 10, 2) + "s"
+            ? "Tempo processamento Harbour: " + Str(nTimeHarbour, 10, 2) + "ms"
+            ? "Primeiro preco: R$ " + Transform(aResultHarbour[1][2], "@E 999,999.99")
+            ? "Ultimo preco: R$ " + Transform(aResultHarbour[Len(aResultHarbour)][2], "@E 999,999.99")
+        ELSE
+            nFalhas++
+            ? "Falha no processamento Harbour"
+        ENDIF
+
+        ?
+
+        // Processa via Harbour (implementacao C)
+        ?
+        ? "PROCESSAMENTO HARBOUR + C:"
+        ? "-------------------"
+        nStart := hb_MilliSeconds()
+        aResultHarbour := CALC_PRECO_OTIMIZADO(hDados["dados"])
+        nEnd := hb_MilliSeconds()
+        nTimeHarbourC := nEnd - nStart
+
+        IF aResultHarbour != NIL .AND. Len(aResultHarbour) > 0
+            ? "Tempo processamento Harbour + C: " + Str(nTimeHarbourC, 10, 2) + "s"
             ? "Primeiro preco: R$ " + Transform(aResultHarbour[1][2], "@E 999,999.99")
             ? "Ultimo preco: R$ " + Transform(aResultHarbour[Len(aResultHarbour)][2], "@E 999,999.99")
         ELSE
@@ -70,29 +102,33 @@ FUNCTION TESTERPC()
         // Processa via RPC
         ? "PROCESSAMENTO RPC + C:"
         ? "---------------------"
-        nStart := Seconds()
+        nStart := hb_MilliSeconds()
         xResultRPC := RPCProcessar("CALC_PRECO_OTIMIZADO", hDados)
-        nEnd := Seconds()
+        nEnd := hb_MilliSeconds()
         nTimeRPC := nEnd - nStart
 
         IF ValType(xResultRPC) == "A" .AND. Len(xResultRPC) > 0
-            ? "Tempo processamento RPC: " + Str(nTimeRPC, 10, 2) + "s"
+            ? "Tempo processamento RPC: " + Str(nTimeRPC, 10, 2) + "ms"
             ? "Primeiro preco: R$ " + Transform(xResultRPC[1][2], "@E 999,999.99")
             ? "Ultimo preco: R$ " + Transform(xResultRPC[Len(xResultRPC)][2], "@E 999,999.99")
 
             ?
             ? "=============================================="
             ? "RESUMO:"
-            ? "HARBOUR: " + Str(nTimeHarbour, 8, 2) + " segundos"
-            ? "RPC+C: " + Str(nTimeRPC, 8, 2) + " segundos"
+            ? "HARBOUR: " + Str(nTimeHarbour, 8, 2) + " Milisegundos"
+            ? "HARBOUR + C: " + Str(nTimeHarbourC, 8, 2) + " Milisegundos"
+            ? "RPC+C: " + Str(nTimeRPC, 8, 2) + " Milisegundos"
 
             IF nTimeHarbour > 0 .AND. nTimeRPC > 0
                 nGanho := ((nTimeHarbour - nTimeRPC) / nTimeHarbour) * 100
-                ? "GANHO: " + Str(nGanho, 8, 1) + "% mais rapido"
-
-                IF nGanho > 0
-                    ? "RPC eh: " + Str(nTimeHarbour / nTimeRPC, 6, 1) + "x mais rapido"
-                ENDIF
+                ? "GANHO Harbour x RPC: " + Str(nGanho, 8, 1) + "% mais rapido"
+                ? "RPC eh: " + Str(nTimeHarbour / nTimeRPC, 6, 1) + "x mais rapido"
+                nGanho := ((nTimeHarbourC - nTimeRPC) / nTimeHarbourC) * 100
+                ? "GANHO Harbour + C x RPC: " + Str(nGanho, 8, 1) + "% mais rapido"
+                ? "RPC eh: " + Str(nTimeHarbour / nTimeRPC, 6, 1) + "x mais rapido"
+                nGanho := ((nTimeHarbourC - nTimeHarbour) / nTimeHarbourC) * 100
+                ? "GANHO Harbour + C x Harbour: " + Str(nGanho, 8, 1) + "% mais rapido"
+                ? "Harbour C eh: " + Str(nTimeHarbourC / nTimeHarbour, 6, 1) + "x mais rapido"
             ENDIF
             ? "=============================================="
 
@@ -217,18 +253,18 @@ PROCEDURE TESTELOTEMASSIVO()
 
     // Gera dados de teste
     ? "Gerando dados para lote massivo..."
-    nStart := Seconds()
+    nStart := hb_MilliSeconds()
     FOR nI := 1 TO 10000  // Reduzido para testes
         AAdd(aItens, {nI, 500 + Mod(nI, 1500), 100.00 + Mod(nI, 300)})
     NEXT
-    nEnd := Seconds()
+    nEnd := hb_MilliSeconds()
 
     hDados["dados"] := aItens
 
     ? "=============================================="
     ? "TESTE DE PERFORMANCE: RPC vs HARBOUR"
     ? "=============================================="
-    ? "Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "s"
+    ? "Tempo geracao dados: " + Str(nEnd - nStart, 10, 2) + "ms"
     ? "Itens preparados: " + hb_NToC(Len(aItens))
     ? ""
 
@@ -239,17 +275,29 @@ PROCEDURE TESTELOTEMASSIVO()
         ? "============================="
 
         // Harbour
-        nStart := Seconds()
+        nStart := hb_MilliSeconds()
         aResultHarbour := ProcessarLoteHarbour(hDados)
-        nEnd := Seconds()
+        nEnd := hb_MilliSeconds()
         nTimeHarbour := nEnd - nStart
         ? "HARBOUR: " + Str(nEnd - nStart, 6, 2) + "s - " + ;
             "Preco: R$ " + Transform(aResultHarbour[1][2], "@E 999,999.99")
 
+        ? "HARBOUR: " + Str(nTimeHarbour, 8, 2) + " Milisegundos"
+
+        // Harbour + C
+        nStart := hb_MilliSeconds()
+        aResultHarbour := PROCESSAR_LOTE_MASSIVO(hDados["dados"])
+        nEnd := hb_MilliSeconds()
+        nTimeHarbour := nEnd - nStart
+        ? "HARBOUR + C: " + Str(nEnd - nStart, 6, 2) + "s - " + ;
+            "Preco: R$ " + Transform(aResultHarbour[1][2], "@E 999,999.99")
+
+        ? "HARBOUR + C: " + Str(nTimeHarbour, 8, 2) + " Milisegundos"
+
         // RPC
-        nStart := Seconds()
+        nStart := hb_MilliSeconds()
         xResultRPC := RPCProcessar("PROCESSAR_LOTE_MASSIVO", hDados)
-        nEnd := Seconds()
+        nEnd := hb_MilliSeconds()
         nTimeRPC := nEnd - nStart
 
         IF ValType(xResultRPC) == "A" .AND. Len(xResultRPC) > 0
@@ -258,8 +306,8 @@ PROCEDURE TESTELOTEMASSIVO()
             ?
             ? "=============================================="
             ? "RESUMO:"
-            ? "HARBOUR: " + Str(nTimeHarbour, 8, 2) + " segundos"
-            ? "RPC+C: " + Str(nTimeRPC, 8, 2) + " segundos"
+            ? "HARBOUR: " + Str(nTimeHarbour, 8, 2) + " Milisegundos"
+            ? "RPC+C: " + Str(nTimeRPC, 8, 2) + " Milisegundos"
 
             IF nTimeHarbour > 0 .AND. nTimeRPC > 0
                 nGanho := ((nTimeHarbour - nTimeRPC) / nTimeHarbour) * 100
@@ -319,12 +367,10 @@ FUNCTION RPCProcessar(cFuncao, hDados)
 
     // Tenta conexao
     FOR nTentativa := 1 TO 3
-        ? "Tentativa " + hb_NToC(nTentativa) + " de conexao na porta 123456"
         
         lConectado := HB_SocketConnect(oSocket, aAddR)
         
         IF lConectado
-            ? "Conectado " + hb_NToC(nTentativa)
             EXIT
         ELSE
             ? "Tentativa " + hb_NToC(nTentativa) + " de conexao falhou"
@@ -448,10 +494,10 @@ STATIC FUNCTION ReceiveRPCResult(oSocket)
 
     ? "Aguardando resposta RPC..."
 
-    nStartTime := Seconds()
+    nStartTime := hb_MilliSeconds()
 
     // *** VERSÃO OTIMIZADA: Recebe dados grandes mais eficientemente ***
-    WHILE (Seconds() - nStartTime) < 60 .AND. (!lHeaderProcessed .OR. nRecv < nLen)
+    WHILE (hb_MilliSeconds()- nStartTime) < 6000 .AND. (!lHeaderProcessed .OR. nRecv < nLen)
         
         nChunkSize := IIF(lHeaderProcessed, Min(65536, nLen - nRecv), 1024)
         cChunk := Space(nChunkSize)
@@ -523,17 +569,17 @@ STATIC FUNCTION ReceiveRPCResult(oSocket)
             EXIT
         ELSE
             // Timeout - feedback menos frequente
-            IF Seconds() - nLastTimeout > 2
+            IF hb_MilliSeconds() - nLastTimeout > 2
                 ? "Aguardando dados..." + IIF(lHeaderProcessed, ;
                   " " + hb_NToC(nRecv)+ "/" + hb_NToC(nLen), "")
-                nLastTimeout := Seconds()
+                nLastTimeout := hb_MilliSeconds()
             ENDIF
             hb_IdleSleep(0.05)
         ENDIF
     ENDDO
 
-    nTotalTime := Seconds() - nStartTime
-    ? "Tempo recebimento: " + AllTrim(Str(nTotalTime, 10, 2)) + "s"
+    nTotalTime := hb_MilliSeconds() - nStartTime
+    ? "Tempo recebimento: " + AllTrim(Str(nTotalTime, 10, 2)) + "ms"
     ? "Dados recebidos: " + hb_NToC(nRecv) + "/" + hb_NToC(nLen) + ;
       " bytes | Header: " + IIF(lHeaderProcessed, "OK", "FALHA")
 
@@ -547,13 +593,13 @@ STATIC FUNCTION ReceiveRPCResult(oSocket)
         ? "Processando JSON (" + hb_NToC(Len(cData)) + " bytes)..."
         
         // Mede tempo de decodificação JSON
-        nJsonStart := Seconds()
+        nJsonStart := hb_MilliSeconds()
         BEGIN SEQUENCE WITH {|oErr| Break(oErr) }
             oResult := hb_JsonDecode(cData)
         RECOVER
             oResult := NIL
         END SEQUENCE
-        nJsonTime := Seconds() - nJsonStart
+        nJsonTime := hb_MilliSeconds() - nJsonStart
         
         IF oResult == NIL
             ? "ERRO: Falha ao decodificar JSON (" + AllTrim(Str(nJsonTime, 10, 3)) + "s)"
