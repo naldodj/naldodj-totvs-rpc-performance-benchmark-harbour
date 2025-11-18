@@ -148,12 +148,12 @@ FUNCTION TESTERPC()
 
 RETURN xResultRPC
 
-/*/{Harbour.doc} ProcessarHarbour()
+/*{Harbour.doc} ProcessarHarbour()
 Processa dados puramente em Harbour (mesma logica do C)
 @type function
 @param hDados Hash - Dados para processamento
 @return Array - Resultado do processamento
-/*/
+*/
 
 FUNCTION ProcessarHarbour(hDados)
     LOCAL aResult := {}
@@ -192,12 +192,12 @@ FUNCTION ProcessarHarbour(hDados)
 
 RETURN aResult
 
-/*/{Harbour.doc} ProcessarLoteHarbour()
+/*{Harbour.doc} ProcessarLoteHarbour()
 Processamento mais complexo em Harbour (equivalente ao C)
 @type function
 @param hDados Hash - Dados para processamento
 @return Array - Resultado do processamento
-/*/
+*/
 
 FUNCTION ProcessarLoteHarbour(hDados)
     LOCAL aResult := {}
@@ -238,10 +238,10 @@ FUNCTION ProcessarLoteHarbour(hDados)
 
 RETURN aResult
 
-/*/{Harbour.doc} TESTELOTEMASSIVO()
+/*{Harbour.doc} TESTELOTEMASSIVO()
 Teste com processamento mais complexo
 @type function
-/*/
+*/
 
 PROCEDURE TESTELOTEMASSIVO()
     LOCAL aItens := {}
@@ -339,13 +339,13 @@ RETURN
 // FUNÇÕES RPC (CORRIGIDAS)
 // ==================================================
 
-/*/{Harbour.doc} RPCProcessar()
+/*{Harbour.doc} RPCProcessar()
 Processa dados via RPC
 @type function
 @param cFuncao Caracter - Funcao a executar
 @param hDados Hash - Dados para processamento
 @return Array/Hash - Resultado do processamento
-/*/
+*/
 
 FUNCTION RPCProcessar(cFuncao, hDados)
     LOCAL oResult := NIL
@@ -394,10 +394,10 @@ FUNCTION RPCProcessar(cFuncao, hDados)
 
 RETURN oResult
 
-/*/{Harbour.doc} SendRPCDados()
+/*{Harbour.doc} SendRPCDados()
 Envia dados para servidor RPC - VERSÃO CORRIGIDA
 @type static function
-/*/
+*/
 
 STATIC FUNCTION SendRPCDados(oSocket, cFuncao, hDados)
     LOCAL cDadosJSON
@@ -453,25 +453,25 @@ STATIC FUNCTION SendRPCDados(oSocket, cFuncao, hDados)
 
 RETURN lRet
 
-/*/{Harbour.doc} ReceiveRPCResult()
+/*{Harbour.doc} ReceiveRPCResult()
 Recebe resultado do RPC - VERSÃO COMPLETAMENTE CORRIGIDA
 @type static function
-/*/
+*/
 
-/*/{Harbour.doc} ReceiveRPCResult()
+/*{Harbour.doc} ReceiveRPCResult()
 Recebe resultado do RPC - VERSÃO COMPLETAMENTE CORRIGIDA
 @type static function
-/*/
+*/
 
-/*/{Harbour.doc} ReceiveRPCResult()
+/*{Harbour.doc} ReceiveRPCResult()
 Recebe resultado do RPC - VERSÃO CORRIGIDA
 @type static function
-/*/
+*/
 
-/*/{Harbour.doc} ReceiveRPCResult()
+/*{Harbour.doc} ReceiveRPCResult()
 Recebe resultado do RPC - VERSÃO OTIMIZADA
 @type static function
-/*/
+*/
 
 STATIC FUNCTION ReceiveRPCResult(oSocket)
     LOCAL cBuffer := "", nLen := 0, cData := "", nRecv := 0
@@ -625,10 +625,10 @@ STATIC FUNCTION ReceiveRPCResult(oSocket)
 
 RETURN oResult
 
-/*/{Harbour.doc} GetUniqueID()
+/*{Harbour.doc} GetUniqueID()
 Gera ID unico para transacao
 @type static function
-/*/
+*/
 
 STATIC FUNCTION GetUniqueID()
     LOCAL cUUID := ""

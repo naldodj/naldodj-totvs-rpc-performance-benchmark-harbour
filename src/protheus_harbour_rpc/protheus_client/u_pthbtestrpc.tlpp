@@ -2,12 +2,12 @@
 #INCLUDE "TOTVS.ch"
 #INCLUDE "TBICONN.CH"
 
-/*/{Protheus.doc} U_PTHBTestRPC()
+/*{Protheus.doc} U_PTHBTestRPC()
 Teste de cliente RPC para processamento otimizado com comparativo ADVPL
 @author SeuNome
 @since 01/01/2024
 @version 1.0
-/*/
+*/
 
 Function U_PTHBTestAllRPC()
     U_PTHBTestRPC()
@@ -119,12 +119,12 @@ static function PTHBTestRPC()
 
 Return xResultRPC
 
-/*/{Protheus.doc} U_PTHbProcADVPL()
+/*{Protheus.doc} U_PTHbProcADVPL()
 Processa dados puramente em ADVPL (mesma logica do C)
 @type function
 @param jDados - Dados para processamento
 @return Array - Resultado do processamento
-/*/
+*/
 
 Function U_PTHbProcADVPL(jDados)
     Local aResult := {}
@@ -158,12 +158,12 @@ Function U_PTHbProcADVPL(jDados)
 
 Return aResult
 
-/*/{Protheus.doc} U_PTHBProcADVPLBatch()
+/*{Protheus.doc} U_PTHBProcADVPLBatch()
 Processamento mais complexo em ADVPL (equivalente ao C)
 @type function
 @param aDados Array - Dados para processamento
 @return Array - Resultado do processamento
-/*/
+*/
 
 Function U_PTHBProcADVPLBatch(jDados)
     Local aResult := {}
@@ -199,10 +199,10 @@ Function U_PTHBProcADVPLBatch(jDados)
 
 Return aResult
 
-/*/{Protheus.doc} U_PTHBTestMassiveBatch()
+/*{Protheus.doc} U_PTHBTestMassiveBatch()
 Teste com processamento mais complexo
 @type function
-/*/
+*/
 
 static Function PTHBTestMassiveBatch()
     Local aItens := {}
@@ -292,13 +292,13 @@ Return
 // FUNÇÕES RPC (mantidas do exemplo anterior)
 // ==================================================
 
-/*/{Protheus.doc} U_RPCProcessar()
+/*{Protheus.doc} U_RPCProcessar()
 Processa dados via RPC
 @type function
 @param cFuncao Caracter - Funcao a executar
 @param aDados Array - Dados para processamento
 @return Array - Resultado do processamento
-/*/
+*/
 
 Static Function U_RPCProcessar(cFuncao, jDados)
     Local cError:=""
@@ -329,10 +329,10 @@ Static Function U_RPCProcessar(cFuncao, jDados)
 
 Return oResult
 
-/*/{Protheus.doc} SendRPCDados()
+/*{Protheus.doc} SendRPCDados()
 Envia dados para servidor RPC
 @type static function
-/*/
+*/
 
 Static Function SendRPCDados(oSocket, cFuncao, jDados)
     Local cDadosJSON
@@ -369,10 +369,10 @@ Static Function SendRPCDados(oSocket, cFuncao, jDados)
 
 Return lRet
 
-/*/{Protheus.doc} SendChunkedData()
+/*{Protheus.doc} SendChunkedData()
 Envia dados em chunks
 @type static function
-/*/
+*/
 
 Static Function SendChunkedData(oSocket, cData)
     Local cError:=""
@@ -398,15 +398,10 @@ Static Function SendChunkedData(oSocket, cData)
 
 Return (nSent == nTotal)
 
-/*/{Protheus.doc} ReceiveRPCResult()
-Recebe resultado do RPC
-@type static function
-/*/
-
-/*/{Protheus.doc} ReceiveRPCResult()
+/*{Protheus.doc} ReceiveRPCResult()
 Recebe resultado do RPC - VERSAO CORRIGIDA
 @type static function
-/*/
+*/
 
 Static Function ReceiveRPCResult(oSocket)
     LOCAL aResp, cResp, nLen, cData, nRecv, nTimeout, oResult, cUncomp
@@ -494,10 +489,10 @@ Static Function ReceiveRPCResult(oSocket)
 
 RETURN oResult
 
-/*/{Protheus.doc} GetUniqueID()
+/*{Protheus.doc} GetUniqueID()
 Gera ID unico para transacao
 @type static function
-/*/
+*/
 
 Static Function GetUniqueID()
 Return UUIDRandomSeq()

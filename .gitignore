@@ -1,1 +1,3 @@
 /src/protheus_harbour_rpc/harbour_server/*.log
+/src/protheus_harbour_rpc/harbour_server/.vscode/.advpl
+/src/protheus_harbour_rpc/harbour_server/.vscode
