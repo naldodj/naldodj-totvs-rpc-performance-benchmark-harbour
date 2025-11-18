@@ -454,21 +454,6 @@ STATIC FUNCTION SendRPCDados(oSocket, cFuncao, hDados)
 RETURN lRet
 
 /*{Harbour.doc} ReceiveRPCResult()
-Recebe resultado do RPC - VERSÃO COMPLETAMENTE CORRIGIDA
-@type static function
-*/
-
-/*{Harbour.doc} ReceiveRPCResult()
-Recebe resultado do RPC - VERSÃO COMPLETAMENTE CORRIGIDA
-@type static function
-*/
-
-/*{Harbour.doc} ReceiveRPCResult()
-Recebe resultado do RPC - VERSÃO CORRIGIDA
-@type static function
-*/
-
-/*{Harbour.doc} ReceiveRPCResult()
 Recebe resultado do RPC - VERSÃO OTIMIZADA
 @type static function
 */
