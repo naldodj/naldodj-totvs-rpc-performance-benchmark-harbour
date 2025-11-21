@@ -2,7 +2,15 @@
 
 <p align="center">
   <a href="https://youtu.be/Ryd_huMETMI">
-    <img src="https://img.youtube.com/vi/Ryd_huMETMI/hqdefault.jpg" alt="Assista ao vídeo no YouTube">
+    <img src="https://img.youtube.com/vi/Ryd_huMETMI/hqdefault.jpg" alt="Assista ao vídeo no YouTube : DNATech :: TOTVS 'Microsiga' Protheus :: A Busca por Performance">
+  </a>
+</p>
+
+---
+
+<p align="center">
+  <a href="https://youtu.be/8RBb_leVxn8">
+    <img src="https://img.youtube.com/vi/8RBb_leVxn8/sddefault.jpg" alt="Assista ao vídeo no YouTube : DNATech :: Otimizando o AdvPL com Harbour e RPC e Dados Compartilhados">
   </a>
 </p>
 
